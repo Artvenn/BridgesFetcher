@@ -5,7 +5,7 @@
 #include "System.h"
 #include "File.h"
 
-#define DEBUG
+// #define DEBUG
 
 #ifdef DEBUG
 const ml::Str EXAPLE_FOLDER_PATH = "/home/andrew/Documents/projects/cpp/BridgesFetcher/example";
@@ -13,22 +13,19 @@ const ml::Str TORRC_FILEPATH = EXAPLE_FOLDER_PATH + "/torrc";
 const ml::Str BRIDGES_FILEPATH = EXAPLE_FOLDER_PATH + "/bridges";
 const ml::Str USER_ID_FILEPATH = EXAPLE_FOLDER_PATH + "/user_id";
 #else
-const char* TORRC_FILEPATH = "/etc/tor/torrc";
-const char* BRIDGES_FILEPATH = "/home/user/br_f/bridges";
-const char* USER_ID_FILEPATH = "/home/user/br_f/user_id";
+const ml::Str TORRC_FILEPATH = "/etc/tor/torrc";
+const ml::Str BRIDGES_FILEPATH = "/home/user/br_f/bridges";
+const ml::Str USER_ID_FILEPATH = "/home/user/br_f/user_id";
 #endif
-
-
 
 const char* BRIDGES_LINK = "https://raw.githubusercontent.com/Artvenn/br/main/bridges";
 const char* BLOCK_SPLITTER = "##############################";
 const char* BRIDGES_START_MARK = "###bridges_start###";
 
 int main() {
-    std::cout << "Hello world" << std::endl;
     ml::File user_id_file(USER_ID_FILEPATH);
     ml::Str user_id = user_id_file.read();
-    // remove(BRIDGES_FILEPATH.head);
+    remove(BRIDGES_FILEPATH.to_c_str());
     ml::Sys::exec(ml::Str("wget -O ") + BRIDGES_FILEPATH + " " +  ml::Str(BRIDGES_LINK));
     ml::File bridges_file(BRIDGES_FILEPATH);
     ml::Str bridges_text = bridges_file.read();
@@ -45,6 +42,7 @@ int main() {
     bridge_rows.unshift();
     bridge_rows.shuffle();
     auto bridges = bridge_rows.join('\n');
+
     ml::File torrc_file(TORRC_FILEPATH);
     auto torrc_rows = torrc_file.read().split('\n')
         .filter([] (ml::Str el) -> bool {
