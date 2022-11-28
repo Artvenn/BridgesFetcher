@@ -48,6 +48,7 @@ i32 main(i32 argc, const char* argv[]) {
     if (finded_user_index == -1) {
         std::cerr << "User with id: " << user_id 
         << ", is not in bridges file" << std::endl;
+        bridges_file.write("Bridge empty");
         exit(-1);
     }
     auto bridge_rows = bridge_blocs[finded_user_index].split('\n');
