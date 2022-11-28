@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include "Str.h"
 #include "Arr.h"
 #include "System.h"
@@ -22,11 +21,24 @@ const char* BRIDGES_LINK = "https://raw.githubusercontent.com/Artvenn/br/main/br
 const char* BLOCK_SPLITTER = "##############################";
 const char* BRIDGES_START_MARK = "###bridges_start###";
 
-int main() {
+enum Mode {SHUFFLE, FETCH_SHUFFLE};
+
+i32 main(i32 argc, const char* argv[]) {
+    Mode mode = Mode::FETCH_SHUFFLE;
+    if (argc > 1) {
+        mode = (ml::Str(argv[1]) == ml::Str("--shuffle")) 
+            ? Mode::SHUFFLE 
+            : Mode::FETCH_SHUFFLE;
+    }
+
     ml::File user_id_file(USER_ID_FILEPATH);
     ml::Str user_id = user_id_file.read();
-    remove(BRIDGES_FILEPATH.to_c_str());
-    ml::Sys::exec(ml::Str("wget -O ") + BRIDGES_FILEPATH + " " +  ml::Str(BRIDGES_LINK));
+
+    if (mode == Mode::FETCH_SHUFFLE) {
+        remove(BRIDGES_FILEPATH.to_c_str());
+        ml::Sys::exec(ml::Str("wget -O ") + BRIDGES_FILEPATH + " " +  ml::Str(BRIDGES_LINK));
+    } 
+
     ml::File bridges_file(BRIDGES_FILEPATH);
     ml::Str bridges_text = bridges_file.read();
     auto bridge_blocs = bridges_text.split(ml::Str(BLOCK_SPLITTER));
