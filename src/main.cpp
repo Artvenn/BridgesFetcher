@@ -44,11 +44,13 @@ int main() {
     auto bridges = bridge_rows.join('\n');
 
     ml::File torrc_file(TORRC_FILEPATH);
-    auto torrc_rows = torrc_file.read().split('\n')
+    auto torrc_rows = torrc_file
+        .read()
+        .trim()
+        .split('\n')
         .filter([] (ml::Str el) -> bool {
             return !el.starts_with("Bridge");
         });
-
     auto bridge_mark_index = torrc_rows.first_where([] (auto el) -> bool {
         return el == BRIDGES_START_MARK;
     });
