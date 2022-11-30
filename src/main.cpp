@@ -36,7 +36,11 @@ i32 main(i32 argc, const char* argv[]) {
 
     if (mode == Mode::FETCH_SHUFFLE) {
         remove(BRIDGES_FILEPATH.to_c_str());
-        ml::Sys::exec(ml::Str("wget -O ") + BRIDGES_FILEPATH + " " +  ml::Str(BRIDGES_LINK));
+        i32 req_res = system((ml::Str("wget -O ") + BRIDGES_FILEPATH + " " +  ml::Str(BRIDGES_LINK)).to_c_str());
+        if (req_res != 0) {
+            std::cerr << "FATAL: Cant connect to bridges repo" << std::endl;
+            exit(-1);
+        }
     } 
 
     ml::File bridges_file(BRIDGES_FILEPATH);
